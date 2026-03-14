@@ -352,6 +352,10 @@ header::before {
     padding: 50px 20px;
   }
 
+  .page-one input:placeholder {
+    font-size: 24px;
+  }
+
   .card {
     width: 85%;
     min-height: 280px;
