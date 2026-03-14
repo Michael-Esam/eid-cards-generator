@@ -74,7 +74,7 @@ header::before {
 
 .page-one,
 .page-two {
-  background-image: url("./background-one.png");
+  background-image: url("./assets/background-one.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -89,7 +89,7 @@ header::before {
 
 
 .page-three {
-  background-image: url("./background-one.png");
+  background-image: url("./assets/background-one.png");
   background-repeat: repeat;
   background-size: contain;
   width: 90%;
@@ -337,7 +337,7 @@ header::before {
     min-height: 470px;
     margin: 20px auto;
     background-size: 100% 100%;
-    background-image: url("./background-responsive.png");
+    background-image: url("./assets/background-one.png");
   }
 
   .page-three {
