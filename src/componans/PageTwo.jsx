@@ -45,7 +45,7 @@ const PageTwo = () => {
                     </button>
 
                     <div className="action-buttons">
-                        <Link to="/" state={{ name: userName }}>
+                        <Link to="/">
                             <button className="yellow">السابق</button>
                         </Link>
                         <button onClick={handleNext}>التالي</button>
