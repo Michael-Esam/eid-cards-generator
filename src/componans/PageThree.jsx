@@ -12,8 +12,7 @@ const PageThree = () => {
     const location = useLocation();
     const navigate = useNavigate();
     // Retrieve the user's name passed from the previous step.
-    // Falls back to "اسم تجريبي" (Dummy Name) if accessed directly without state.
-    const userName = location.state?.name || "اسم تجريبي";
+    const userName = location.state?.name;
 
     // State to keep track of the currently chosen template index
     const [selectedCard, setSelectedCard] = useState(null);
@@ -29,6 +28,7 @@ const PageThree = () => {
         }
     };
 
+    // if user not enter name redirect to home page
     useEffect(() => {
         if (!userName) {
             navigate("/");
@@ -67,7 +67,7 @@ const PageThree = () => {
 
                     {/* Navigation Buttons Container */}
                     <div className="action-buttons">
-                        <Link to="/page-two">
+                        <Link to="/page-two" state={{ name: userName }} >
                             <button className="btn-yellow">السابق</button>
                         </Link>
                         <button onClick={handleNext}>التالي</button>

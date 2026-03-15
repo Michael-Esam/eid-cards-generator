@@ -167,12 +167,18 @@ header .right img {
   text-align: right;
   outline: none;
   font-family: inherit;
+  transition: opacity 0.2s, background-color 0.2s;
 }
 
 .card input::placeholder {
   color: #fff;
   opacity: 1;
   font-size: 36px;
+}
+
+.card input:focus {
+  background-color: #EE4032;
+  opacity: 1;
 }
 
 /* Primary Button Styling */
@@ -361,7 +367,7 @@ header .right img {
   }
 
   .card input::placeholder {
-    font-size: 24px;
+    font-size: 16px;
   }
 
   .card button {
@@ -378,7 +384,7 @@ header .right img {
 
   .action-buttons {
     margin-top: 15px;
-    gap: 15px;
+    gap: 10px;
   }
 
   .card .action-buttons button {
@@ -439,7 +445,7 @@ header .right img {
   }
 
   .card {
-    width: 90%;
+    width: 95%;
     min-height: 280px;
     /* Extra top/bottom padding to breathe */
     padding: 100px 20px;
@@ -447,35 +453,36 @@ header .right img {
   }
 
   .page-two .card {
-    padding: 30px 30px;
+    padding: 40px 20px;
   }
 
   .card h3 {
     font-size: 26px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
   }
 
   .card input {
     max-width: 300px;
     font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 50px;
+    padding: 10px 30px;
+    border-radius: 20px;
+    font-weight: 500;
   }
 
   .card input::placeholder {
-    font-size: 24px;
+    font-size: 16px;
+    font-weight: 500;
   }
 
   .card button {
-    margin-top: 20px;
-    font-size: 14px;
-    padding: 5px 40px;
+    font-size: 16px;
   }
 
   .card .btn-choice {
     font-size: 16px;
     padding: 10px 20px;
-    border-radius: 50px;
+    margin: 10px;
+    border-radius: 20px;
   }
 
   .action-buttons {
