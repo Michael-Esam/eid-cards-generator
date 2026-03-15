@@ -34,6 +34,9 @@ const PageThree = () => {
             navigate("/");
         }
     }, [userName, navigate]);
+    if (!userName) {
+        return null;
+    }
 
     return (
         <div className="page-container">
