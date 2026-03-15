@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, Link, Navigate } from 'react-router-dom';
 import Header from './Header';
 
 /**
@@ -10,7 +10,6 @@ import Header from './Header';
  */
 const PageThree = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     // Retrieve the user's name passed from the previous step.
     const userName = location.state?.name;
 
@@ -29,13 +28,8 @@ const PageThree = () => {
     };
 
     // if user not enter name redirect to home page
-    useEffect(() => {
-        if (!userName) {
-            navigate("/");
-        }
-    }, [userName, navigate]);
     if (!userName) {
-        return null;
+        return <Navigate to="/" replace />;
     }
 
     return (
