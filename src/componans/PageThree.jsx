@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
 /**
@@ -10,11 +10,11 @@ import Header from './Header';
  */
 const PageThree = () => {
     const location = useLocation();
-    
+    const navigate = useNavigate();
     // Retrieve the user's name passed from the previous step.
     // Falls back to "اسم تجريبي" (Dummy Name) if accessed directly without state.
     const userName = location.state?.name || "اسم تجريبي";
-    
+
     // State to keep track of the currently chosen template index
     const [selectedCard, setSelectedCard] = useState(null);
 
@@ -29,22 +29,28 @@ const PageThree = () => {
         }
     };
 
+    useEffect(() => {
+        if (!userName) {
+            navigate("/");
+        }
+    }, [userName, navigate]);
+
     return (
         <div className="page-container">
             {/* Common Application Header */}
             <Header />
-            
+
             <main className="page-three">
                 <div className="card">
                     {/* Page Title */}
                     <h3 className="page-three-title">أختار التصميم الذي يناسبك</h3>
-                    
+
                     {/* Gallery Grid for Templates */}
                     <div className="grid-container">
                         {/* Render 8 placeholder template cards */}
                         {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => (
-                            <div 
-                                key={index} 
+                            <div
+                                key={index}
                                 className={`grid-item ${selectedCard === index ? 'selected' : ''}`}
                                 onClick={() => setSelectedCard(index)}
                                 role="button"
@@ -58,7 +64,7 @@ const PageThree = () => {
                             </div>
                         ))}
                     </div>
-                    
+
                     {/* Navigation Buttons Container */}
                     <div className="action-buttons">
                         <Link to="/page-two">
