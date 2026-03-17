@@ -161,103 +161,11 @@ const PageThree = () => {
     const memberType = location.state?.memberType;
     const designs = memberType === 'gdsc' ? google : normal;
     const [selectedCard, setSelectedCard] = useState(null);
-    const [activeCard, setActiveCard] = useState(null);
     const [previewDesign, setPreviewDesign] = useState(null);
-    const canvasRefs = useRef([]);
-    const popupCanvasRef = useRef(null);
-    const observerRef = useRef(null); // مراقب التقاطع
-
-    // دالة رسم الصورة والنص (بدون تغيير)
-    const drawImageWithText = (canvas, design, userName) => {
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = design.image;
-        img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            ctx.font = `bold ${design.fontSize}px 'Cairo', sans-serif`;
-            ctx.fillStyle = design.color;
-            ctx.textAlign = 'right';
-            ctx.fillText(userName, design.textX, design.textY);
-        };
-        img.onerror = (err) => console.error('خطأ في تحميل الصورة:', design.image, err);
-    };
-
-    // دالة لبدء مراقبة عنصر canvas
-    const observeCanvas = useCallback((canvas, design, userName) => {
-        if (!canvas) return;
-
-        // إذا لم يتم إنشاء الـ observer بعد، قم بإنشائه
-        if (!observerRef.current) {
-            observerRef.current = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const canvasEl = entry.target;
-                        // استرجاع البيانات من data attributes
-                        const designStr = canvasEl.dataset.design;
-                        const userNameStr = canvasEl.dataset.username;
-                        if (designStr && userNameStr) {
-                            try {
-                                const designObj = JSON.parse(designStr);
-                                drawImageWithText(canvasEl, designObj, userNameStr);
-                            } catch (e) {
-                                console.error('خطأ في تحليل بيانات التصميم', e);
-                            }
-                        }
-                        // بعد الرسم، توقف عن مراقبة هذا العنصر
-                        observerRef.current.unobserve(canvasEl);
-                    }
-                });
-            }, { threshold: 0.1, rootMargin: '50px' }); // يبدأ التحميل عندما يصبح العنصر على بعد 50px من الظهور
-        }
-
-        // تخزين بيانات التصميم واسم المستخدم في data attributes
-        canvas.dataset.design = JSON.stringify(design);
-        canvas.dataset.username = userName;
-
-        // بدء المراقبة
-        observerRef.current.observe(canvas);
-    }, []);
-
-    // عرض الصورة في النافذة المنبثقة (نفس الكود)
-    useEffect(() => {
-        if (previewDesign && popupCanvasRef.current) {
-            drawImageWithText(popupCanvasRef.current, previewDesign, userName);
-        }
-    }, [previewDesign, userName]);
-
-    const handleViewClick = (e, design) => {
-        e.stopPropagation();
-        setPreviewDesign(design);
-    };
-
-    const handleSelectClick = (e, index) => {
-        e.stopPropagation();
-        setSelectedCard(index);
-        setActiveCard(null);
-    };
 
     const handleNext = () => {
         if (selectedCard !== null) {
-            const selectedCanvas = canvasRefs.current[selectedCard];
-            if (selectedCanvas) {
-                selectedCanvas.toBlob((blob) => {
-                    if (blob) {
-                        const url = URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = `eid-card-${userName || 'user'}-${Date.now()}.png`;
-                        link.click();
-                        URL.revokeObjectURL(url);
-                    }
-                    navigate('/page-four', { state: { name: userName, design: designs[selectedCard] } });
-                }, 'image/png');
-            } else {
-                navigate('/page-four', { state: { name: userName, design: designs[selectedCard] } });
-            }
+            navigate('/page-four', { state: { name: userName, design: designs[selectedCard] } });
         } else {
             alert('الرجاء اختيار أحد التصاميم للمتابعة');
         }
@@ -279,27 +187,31 @@ const PageThree = () => {
                             <div
                                 key={design.id}
                                 className={`grid-item ${selectedCard === index ? 'selected' : ''}`}
-                                onClick={() => setActiveCard(activeCard === index ? null : index)}
-                                role="button"
-                                tabIndex={0}
-                                aria-label={`Select template ${index + 1}`}
                             >
-                                <canvas
-                                    ref={(el) => {
-                                        canvasRefs.current[index] = el;
-                                        if (el) observeCanvas(el, design, userName); // استخدام lazy loading
-                                    }}
-                                    style={{ width: '100%', height: 'auto', display: 'block', background: '#f0f0f0' }} // خلفية مؤقتة
+                                <img
+                                    src={design.image}
+                                    alt={design.name}
+                                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                                    loading="lazy"
                                 />
-                                {activeCard === index && (
-                                    <div className="card-overlay" onClick={(e) => { e.stopPropagation(); setActiveCard(null); }}>
-                                        <button className="btn-view" onClick={(e) => handleViewClick(e, design)}>عرض</button>
-                                        <button className="btn-select" onClick={(e) => handleSelectClick(e, index)}>إختيار</button>
-                                    </div>
-                                )}
+                                <div className="card-actions">
+                                    <button
+                                        className="btn-view"
+                                        onClick={() => setPreviewDesign(design)}
+                                    >
+                                        عرض
+                                    </button>
+                                    <button
+                                        className="btn-select"
+                                        onClick={() => setSelectedCard(index)}
+                                    >
+                                        اختيار
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
+
                     <div className="action-buttons">
                         <Link to="/page-two" state={{ name: userName }}>
                             <button className="btn-yellow">السابق</button>
@@ -310,15 +222,14 @@ const PageThree = () => {
             </main>
 
             {previewDesign && (
-                <div className="image-popup-overlay" onClick={() => setPreviewDesign(null)}>
-                    <div className="image-popup-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="btn-close-popup" onClick={() => setPreviewDesign(null)}>×</button>
-                        <canvas ref={popupCanvasRef} />
+                <div className="preview-modal" onClick={() => setPreviewDesign(null)}>
+                    <div className="preview-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-btn" onClick={() => setPreviewDesign(null)}>×</button>
+                        <img src={previewDesign.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '80vh' }} />
+                        <p style={{ textAlign: 'center', marginTop: '10px' }}>سيتم إضافة اسمك على الصورة في الصفحة التالية</p>
                     </div>
                 </div>
             )}
         </div>
     );
 };
-
-export default PageThree;
