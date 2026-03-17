@@ -1,76 +1,185 @@
-import { useState, useEffect } from 'react';
-import { useLocation, Link, Navigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
-/**
- * PageThree Component
- * 
- * This component displays a gallery of design templates. 
- * Users can select a template card which overlays their name (passed via route state).
- */
+const designs = [
+    {
+        id: 1,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 250, textY: 350, fontSize: 32, color: '#ffffff'
+    },
+    {
+        id: 2,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 200, textY: 300, fontSize: 30, color: '#ff0000'
+    },
+    {
+        id: 3,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 180, textY: 280, fontSize: 28, color: '#00ff00'
+    },
+    {
+        id: 4,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 220, textY: 320, fontSize: 34, color: '#0000ff'
+    },
+    {
+        id: 5,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 150, textY: 250, fontSize: 26, color: '#ffff00'
+    },
+    {
+        id: 6,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 270, textY: 370, fontSize: 36, color: '#ff00ff'
+    },
+    {
+        id: 7,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 190, textY: 290, fontSize: 32, color: '#00ffff'
+    },
+    {
+        id: 8,
+        name: "عيد مبارك",
+        image: "/images/design1.jpg",
+        textX: 210, textY: 310, fontSize: 30, color: '#ffffff'
+    }
+];
 const PageThree = () => {
     const location = useLocation();
-    // Retrieve the user's name passed from the previous step.
+    const navigate = useNavigate();
     const userName = location.state?.name;
-
-    // State to keep track of the currently chosen template index
     const [selectedCard, setSelectedCard] = useState(null);
+    const [activeCard, setActiveCard] = useState(null);
+    const [previewDesign, setPreviewDesign] = useState(null);
+    const canvasRefs = useRef([]);
+    const popupCanvasRef = useRef(null);
 
-    // Handler for proceeding to the next step
+    useEffect(() => {
+        if (previewDesign && popupCanvasRef.current) {
+            drawImageWithText(popupCanvasRef.current, previewDesign, userName);
+        }
+    }, [previewDesign, userName]);
+
+    // دالة رسم الصورة والنص على الكانفس
+    const drawImageWithText = (canvas, design, userName) => {
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = design.image;
+        img.onload = () => {
+            // ضبط أبعاد الكانفس حسب أبعاد الصورة
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            // رسم النص
+            ctx.font = `bold ${design.fontSize}px 'Cairo', sans-serif`;
+            ctx.fillStyle = design.color;
+            ctx.textAlign = 'right';
+            ctx.fillText(userName, design.textX, design.textY);
+        };
+        img.onerror = (err) => {
+            console.error('خطأ في تحميل الصورة:', design.image, err);
+        };
+    };
+
+    const handleViewClick = (e, design) => {
+        e.stopPropagation();
+        setPreviewDesign(design);
+    };
+
+    const handleSelectClick = (e, index) => {
+        e.stopPropagation();
+        setSelectedCard(index);
+        setActiveCard(null);
+    };
+
+
     const handleNext = () => {
         if (selectedCard !== null) {
-            // Future step: Navigate to a final preview, download page, or perform API call
-            alert(`تم اختيار التصميم رقم ${selectedCard + 1} لـ ${userName}`);
+            navigate('/page-four', { state: { name: userName, design: designs[selectedCard] }});
         } else {
-            // Prompt the user to select a template if none is selected
             alert('الرجاء اختيار أحد التصاميم للمتابعة');
         }
     };
 
-    // if user not enter name redirect to home page
+    const downloadSelectedImage = () => {
+        if (selectedCard === null) {
+            alert('الرجاء اختيار تصميم أولاً');
+            return;
+        }
+        const canvas = canvasRefs.current[selectedCard];
+        if (canvas) {
+            const link = document.createElement('a');
+            link.download = `design-${selectedCard + 1}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    };
+
     if (!userName) {
         return <Navigate to="/" replace />;
     }
 
     return (
         <div className="page-container">
-            {/* Common Application Header */}
             <Header />
-
             <main className="page-three">
                 <div className="card">
-                    {/* Page Title */}
                     <h3 className="page-three-title">أختار التصميم الذي يناسبك</h3>
 
-                    {/* Gallery Grid for Templates */}
                     <div className="grid-container">
-                        {/* Render 8 placeholder template cards */}
-                        {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => (
+                        {designs.map((design, index) => (
                             <div
-                                key={index}
+                                key={design.id}
                                 className={`grid-item ${selectedCard === index ? 'selected' : ''}`}
-                                onClick={() => setSelectedCard(index)}
+                                onClick={() => setActiveCard(activeCard === index ? null : index)}
                                 role="button"
                                 tabIndex={0}
                                 aria-label={`Select template ${index + 1}`}
                             >
-                                {/* Placeholder for the actual card image */}
-                                <div className="image-placeholder"></div>
-                                {/* Name overlaid on the card design */}
-                                <div className="name-overlay">{userName}</div>
+                                <canvas
+                                    ref={(el) => {
+                                        canvasRefs.current[index] = el;
+                                        // استدعاء الرسم فور توفر العنصر
+                                        if (el) drawImageWithText(el, design, userName);
+                                    }}
+                                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                                />
+                                {activeCard === index && (
+                                    <div className="card-overlay" onClick={(e) => { e.stopPropagation(); setActiveCard(null); }}>
+                                        <button className="btn-view" onClick={(e) => handleViewClick(e, design)}>عرض</button>
+                                        <button className="btn-select" onClick={(e) => handleSelectClick(e, index)}>إختيار</button>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
-
-                    {/* Navigation Buttons Container */}
                     <div className="action-buttons">
-                        <Link to="/page-two" state={{ name: userName }} >
+                        <Link to="/page-two" state={{ name: userName }}>
                             <button className="btn-yellow">السابق</button>
                         </Link>
                         <button onClick={handleNext}>التالي</button>
                     </div>
                 </div>
             </main>
+
+            {previewDesign && (
+                <div className="image-popup-overlay" onClick={() => setPreviewDesign(null)}>
+                    <div className="image-popup-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="btn-close-popup" onClick={() => setPreviewDesign(null)}>×</button>
+                        <canvas ref={popupCanvasRef} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
