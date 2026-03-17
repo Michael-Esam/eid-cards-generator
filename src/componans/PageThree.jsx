@@ -2,60 +2,149 @@ import { useState, useRef, useEffect } from 'react';
 import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
-const designs = [
+const google = [
     {
         id: 1,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design1.jpg",
         textX: 250, textY: 350, fontSize: 32, color: '#ffffff'
     },
     {
         id: 2,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design2.jpg",
         textX: 200, textY: 300, fontSize: 30, color: '#ff0000'
     },
     {
         id: 3,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design3.jpg",
         textX: 180, textY: 280, fontSize: 28, color: '#00ff00'
     },
     {
         id: 4,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design4.jpg",
         textX: 220, textY: 320, fontSize: 34, color: '#0000ff'
     },
     {
         id: 5,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design5.jpg",
         textX: 150, textY: 250, fontSize: 26, color: '#ffff00'
     },
     {
         id: 6,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design6.jpg",
         textX: 270, textY: 370, fontSize: 36, color: '#ff00ff'
     },
     {
         id: 7,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design7.jpg",
         textX: 190, textY: 290, fontSize: 32, color: '#00ffff'
     },
     {
         id: 8,
         name: "عيد مبارك",
-        image: "/images/design1.jpg",
+        image: "/images/google/design8.jpg",
         textX: 210, textY: 310, fontSize: 30, color: '#ffffff'
-    }
+    },
+    {
+        id: 9,
+        name: "عيد مبارك",
+        image: "/images/google/design9.jpg",
+        textX: 230, textY: 330, fontSize: 28, color: '#000000'
+    },
+    {
+        id: 10,
+        name: "عيد مبارك",
+        image: "/images/google/design10.jpg",
+        textX: 250, textY: 350, fontSize: 26, color: '#ffffff'
+    },
+    {
+        id: 11,
+        name: "عيد مبارك",
+        image: "/images/google/design11.jpg",
+        textX: 270, textY: 370, fontSize: 24, color: '#000000'
+    },
+];
+
+const normal = [
+    {
+        id: 1,
+        name: "عيد مبارك",
+        image: "/images/normal/design1.jpg",
+        textX: 250, textY: 350, fontSize: 32, color: '#ffffff'
+    },
+    {
+        id: 2,
+        name: "عيد مبارك",
+        image: "/images/normal/design2.jpg",
+        textX: 200, textY: 300, fontSize: 30, color: '#ff0000'
+    },
+    {
+        id: 3,
+        name: "عيد مبارك",
+        image: "/images/normal/design3.jpg",
+        textX: 180, textY: 280, fontSize: 28, color: '#00ff00'
+    },
+    {
+        id: 4,
+        name: "عيد مبارك",
+        image: "/images/normal/design4.jpg",
+        textX: 220, textY: 320, fontSize: 34, color: '#0000ff'
+    },
+    {
+        id: 5,
+        name: "عيد مبارك",
+        image: "/images/normal/design5.jpg",
+        textX: 150, textY: 250, fontSize: 26, color: '#ffff00'
+    },
+    {
+        id: 6,
+        name: "عيد مبارك",
+        image: "/images/normal/design6.jpg",
+        textX: 270, textY: 370, fontSize: 36, color: '#ff00ff'
+    },
+    {
+        id: 7,
+        name: "عيد مبارك",
+        image: "/images/normal/design7.jpg",
+        textX: 190, textY: 290, fontSize: 32, color: '#00ffff'
+    },
+    {
+        id: 8,
+        name: "عيد مبارك",
+        image: "/images/normal/design8.jpg",
+        textX: 210, textY: 310, fontSize: 30, color: '#ffffff'
+    },
+    {
+        id: 9,
+        name: "عيد مبارك",
+        image: "/images/normal/design9.jpg",
+        textX: 230, textY: 330, fontSize: 28, color: '#000000'
+    },
+    {
+        id: 10,
+        name: "عيد مبارك",
+        image: "/images/normal/design10.jpg",
+        textX: 250, textY: 350, fontSize: 26, color: '#ffffff'
+    },
+    {
+        id: 11,
+        name: "عيد مبارك",
+        image: "/images/normal/design11.jpg",
+        textX: 270, textY: 370, fontSize: 24, color: '#000000'
+    },
 ];
 const PageThree = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const userName = location.state?.name;
+    const memberType = location.state?.memberType; // 'gdsc' | 'other'
+    const designs = memberType === 'gdsc' ? google : normal;
     const [selectedCard, setSelectedCard] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
     const [previewDesign, setPreviewDesign] = useState(null);

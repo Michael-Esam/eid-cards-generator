@@ -12,7 +12,12 @@ const PageTwo = () => {
 
     const handleNext = () => {
         if (selectedOption) {
-            navigate('/page-three', { state: location.state });
+            navigate('/page-three', {
+                state: {
+                    ...location.state,
+                    memberType: selectedOption, // 'gdsc' | 'other'
+                },
+            });
         } else {
             setErrorMessage('الرجاء اختيار أحد الخيارات للمتابعة');
         }

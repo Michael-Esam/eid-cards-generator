@@ -29,7 +29,7 @@ body {
 /* Shared page background styling (for pages 1 & 2) */
 .page-one,
 .page-two {
-  background-image: url("./assets/background-one.png");
+  background-image: url("./assets/backgrounds/background-one.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -44,7 +44,7 @@ body {
 
 /* Specific styling for Page 3 with a repeating background */
 .page-three {
-  background-image: url("./assets/design.png");
+  background-image: url("./assets/backgrounds/design.png");
   background-repeat: repeat;
   background-size: contain;
   width: 90%;
@@ -488,7 +488,7 @@ header .right img {
   justify-content: center;
   align-items: center;
   min-height: 600px;
-  background-image: url("./assets/background-one.png");
+  background-image: url("./assets/backgrounds/background-one.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -764,7 +764,7 @@ header .right img {
     min-height: 470px;
     margin: 20px auto;
     background-size: 100% 100%;
-    background-image: url("./assets/background-responsive.png");
+    background-image: url("./assets/backgrounds/background-responsive.png");
   }
 
   .page-three {
@@ -847,7 +847,7 @@ header .right img {
     margin: 20px auto;
     padding: 10px 5px;
     background-size: 100% 100%;
-    background-image: url("./assets/design.png");
+    background-image: url("./assets/backgrounds/design.png");
     background-repeat: repeat;
     background-size: contain;
     border-radius: 20px;
