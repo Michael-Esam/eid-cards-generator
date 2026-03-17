@@ -7,10 +7,21 @@ import Header from './Header';
 const PageFour = () => {
     const location = useLocation();
     const { name, design } = location.state || {};
+
+    // للتأكد من وصول البيانات
+    console.log('PageFour received:', { name, design });
+
     const canvasRef = useRef(null);
 
     useEffect(() => {
-        if (!name || !design || !canvasRef.current) return;
+        if (!name || !design) {
+            console.log('Missing name or design');
+            return;
+        }
+        if (!canvasRef.current) {
+            console.log('Canvas ref not ready');
+            return;
+        }
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -19,6 +30,7 @@ const PageFour = () => {
         img.src = design.image;
 
         img.onload = () => {
+            console.log('Image loaded:', design.image);
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
@@ -28,58 +40,77 @@ const PageFour = () => {
             ctx.textAlign = 'right';
             ctx.fillText(name, design.textX, design.textY);
         };
+
+        img.onerror = (err) => {
+            console.error('Failed to load image:', design.image, err);
+        };
     }, [name, design]);
 
+    // إذا لم يصل الاسم أو التصميم، نوجه المستخدم إلى الصفحة الرئيسية
     if (!name || !design) {
+        console.log('Redirecting to home due to missing data');
         return <Navigate to="/" replace />;
     }
 
-    const shareUrl = window.location.origin;
-    const shareText = "كل عام وانتم الخير، شاركوا فرحتكم مع احبابكم!";
-
-    const copyLink = async () => {
-        try {
-            await navigator.clipboard.writeText(shareUrl);
-            alert('تم نسخ الرابط');
-        } catch {
-            alert('لم نتمكن من نسخ الرابط. انسخه يدويًا من شريط العنوان.');
-        }
-    };
-
-    const openShareUrl = (url) => {
-        window.open(url, '_blank', 'noopener,noreferrer');
-    };
-
-    const handleShare = async (platform) => {
-        if (navigator.share && (platform === 'snapchat' || platform === 'instagram' || platform === 'tiktok')) {
-            try {
-                await navigator.share({ text: shareText, url: shareUrl });
+    // دالة تحويل canvas إلى blob
+    const getImageBlob = () => {
+        return new Promise((resolve) => {
+            const canvas = canvasRef.current;
+            if (!canvas) {
+                resolve(null);
                 return;
-            } catch {
-                // fall through to copy-link fallback
+            }
+            canvas.toBlob((blob) => resolve(blob), 'image/png');
+        });
+    };
+
+    // دالة تحميل الصورة كملف
+    const downloadImage = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = `eid-image-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    };
+
+    // دالة المشاركة الرئيسية
+    const shareImage = async (platform) => {
+        console.log('Share button clicked for platform:', platform);
+
+        // أولاً نحاول الحصول على blob الصورة
+        const blob = await getImageBlob();
+        if (!blob) {
+            alert('لم نتمكن من تحضير الصورة للمشاركة');
+            return;
+        }
+
+        const file = new File([blob], 'eid-image.png', { type: 'image/png' });
+
+        // التحقق من دعم مشاركة الملفات عبر Web Share API
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'عيد مبارك',
+                    text: 'كل عام وانتم بخير',
+                });
+                console.log('Shared successfully');
+                return; // تمت المشاركة بنجاح
+            } catch (error) {
+                console.log('User cancelled or sharing failed:', error);
+                // إذا ألغى المستخدم المشاركة، لا نفعل شيئًا
+                // ولكن إذا كان خطأ تقني، نكمل إلى الخيارات الأخرى
             }
         }
 
-        switch (platform) {
-            case 'x':
-                openShareUrl(
-                    `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`
-                );
-                return;
-            case 'whatsapp':
-                openShareUrl(`https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`);
-                return;
-            case 'linkedin':
-                openShareUrl(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`);
-                return;
-            case 'snapchat':
-            case 'instagram':
-            case 'tiktok':
-                await copyLink();
-                return;
-            default:
-                await copyLink();
-        }
+        // إذا لم يدعم الجهاز مشاركة الملفات، نعرض رسالة ثم نقوم بتحميل الصورة
+        alert(`مشاركة عبر ${platform} لا تدعم رفع الصور مباشرة على هذا الجهاز. سيتم تحميل الصورة، ثم يمكنك مشاركتها يدويًا.`);
+        downloadImage();
+    };
+
+    const handleShare = (platform) => {
+        shareImage(platform);
     };
 
     return (
@@ -115,7 +146,7 @@ const PageFour = () => {
 
                     <div className="canvas-section">
                         <div className="page-four-preview">
-                            <canvas ref={canvasRef} />
+                            <canvas ref={canvasRef} style={{ width: '100%', height: 'auto', display: 'block' }} />
                         </div>
                     </div>
                 </div>
