@@ -54,7 +54,7 @@ const PageFour = () => {
 
             const safeName = String(name || 'User Name').trim() || 'User Name';
 
-            // ✅ نفس حسابات PageThree بالظبط
+            // ✅ same calculations as PageThree
             const x = design.textX * (W / img.naturalWidth);
             const y = design.textY * (H / img.naturalHeight);
             const fs = Math.round(H * (design.fontSizeRatio || 0.05));

@@ -39,31 +39,33 @@ const PageOne = () => {
                     {errorMessage && (
                         <p className="error-message">{errorMessage}</p>
                     )}
-                    <input
-                        type="text"
-                        placeholder="اسمك يهمنا!"
-                        value={name}
-                        onChange={(e) => {
-                            // Collapse multiple consecutive spaces into one
-                            const val = e.target.value.replace(/  +/g, ' ');
-                            setName(val);
-                            // Error 1: show Arabic-only error while typing non-Arabic
-                            const arabicOnly = /^[\u0600-\u06FF\s]*$/;
-                            if (val && !arabicOnly.test(val)) {
-                                setErrorMessage('الرجاء كتابة الاسم باللغة العربية فقط');
-                            } else {
-                                setErrorMessage('');
-                            }
-                        }}
-                        onKeyDown={(e) => {
-                            // Error 2: when space is pressed, remind user to complete their two-part name
-                            if (e.key === ' ') {
-                                setErrorMessage('أكمل كتابة اسمك الثنائي');
-                            }
-                        }}
-                        style={errorMessage ? { backgroundColor: '#e53e3e', color: '#fff', border: '2px solid #c53030' } : {}}
-                    />
-                    <button onClick={handleNext}>التالي</button>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            placeholder="اسمك يهمنا!"
+                            value={name}
+                            onChange={(e) => {
+                                // Collapse multiple consecutive spaces into one
+                                const val = e.target.value.replace(/  +/g, ' ');
+                                setName(val);
+                                // Error 1: show Arabic-only error while typing non-Arabic
+                                const arabicOnly = /^[\u0600-\u06FF\s]*$/;
+                                if (val && !arabicOnly.test(val)) {
+                                    setErrorMessage('الرجاء كتابة الاسم باللغة العربية فقط');
+                                } else {
+                                    setErrorMessage('');
+                                }
+                            }}
+                            onKeyDown={(e) => {
+                                // Error 2: when space is pressed, remind user to complete their two-part name
+                                if (e.key === ' ') {
+                                    setErrorMessage('أكمل كتابة اسمك الثنائي');
+                                }
+                            }}
+                            style={errorMessage ? { color: '#fff' } : {}}
+                        />
+                        <button onClick={handleNext}>التالي</button>
+                    </div>
                 </div>
             </div>
             <footer>

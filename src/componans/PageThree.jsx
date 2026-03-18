@@ -17,7 +17,7 @@ const getAssetUrlByFilename = (globMap, filename) => {
 const googleAssetUrls = import.meta.glob('../assets/images/google/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
 const normalAssetUrls = import.meta.glob('../assets/images/normal/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
 
-// الإحداثيات على الصورة الأصلية 4962x7016
+// Coordinates on original image 4962x7016
 const google = [
     { id: 1, image: getAssetUrlByFilename(googleAssetUrls, 'design1.jpg'), textX: 2481, textY: 2455, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
     { id: 2, image: getAssetUrlByFilename(googleAssetUrls, 'design2.jpg'), textX: 2481, textY: 5444, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
@@ -29,7 +29,7 @@ const google = [
     { id: 8, image: getAssetUrlByFilename(googleAssetUrls, 'design8.jpg'), textX: 2481, textY: 6560, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 9, image: getAssetUrlByFilename(googleAssetUrls, 'design9.jpg'), textX: 2481, textY: 1700, fontSizeRatio: 0.06, color: '#c1803a', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 10, image: getAssetUrlByFilename(googleAssetUrls, 'design10.jpg'), textX: 2481, textY: 2355, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 11, image: getAssetUrlByFilename(googleAssetUrls, 'design11.jpg'), textX: 2821, textY: 1700, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 11, image: getAssetUrlByFilename(googleAssetUrls, 'design11.jpg'), textX: 2821, textY: 1760, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
 const normal = [
@@ -43,7 +43,7 @@ const normal = [
     { id: 8, image: getAssetUrlByFilename(normalAssetUrls, 'design8.jpg'), textX: 2481, textY: 6560, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 9, image: getAssetUrlByFilename(normalAssetUrls, 'design9.jpg'), textX: 2481, textY: 1700, fontSizeRatio: 0.06, color: '#c1803a', fontFamily: FONTS.AYNAMA_CURVED },
     { id: 10, image: getAssetUrlByFilename(normalAssetUrls, 'design10.jpg'), textX: 2481, textY: 2355, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
-    { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1700, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
+    { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1760, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
 function drawCard(canvas, design, userName, variant = 'grid') {
@@ -108,7 +108,7 @@ const PageThree = () => {
 
         const design = designs[selectedCard];
 
-        // ✅ canvas مؤقت بالحجم الكامل للصورة الأصلية
+        // ✅ temporary canvas with original image size
         const fullCanvas = document.createElement('canvas');
         await new Promise((resolve, reject) => {
             const img = new Image();

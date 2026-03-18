@@ -31,19 +31,22 @@ const PageTwo = () => {
             <Header />
             <div className="page-two">
                 <div className="card">
-                    <h3>علاقتك بمجموعة مطوري جوجل :</h3>
-                    <button
-                        className={`btn-choice ${selectedOption === 'gdsc' ? 'selected' : ''}`}
-                        onClick={() => { setSelectedOption('gdsc'); setErrorMessage(''); }}
-                    >
-                        مستفيد/ة
-                    </button>
-                    <button
-                        className={`btn-choice blue ${selectedOption === 'other' ? 'selected' : ''}`}
-                        onClick={() => { setSelectedOption('other'); setErrorMessage(''); }}
-                    >
-                        لا
-                    </button>
+                    <div className="card-content">
+
+                        <h3>علاقتك بمجموعة مطوري جوجل :</h3>
+                        <button
+                            className={`btn-choice ${selectedOption === 'gdsc' ? 'selected' : ''}`}
+                            onClick={() => { setSelectedOption('gdsc'); setErrorMessage(''); }}
+                        >
+                            مستفيد/ة
+                        </button>
+                        <button
+                            className={`btn-choice blue ${selectedOption === 'other' ? 'selected' : ''}`}
+                            onClick={() => { setSelectedOption('other'); setErrorMessage(''); }}
+                        >
+                            لا
+                        </button>
+                    </div>
                     {errorMessage && (
                         <p className="error-message">{errorMessage}</p>
                     )}
