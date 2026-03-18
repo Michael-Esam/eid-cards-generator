@@ -115,6 +115,9 @@ function drawCard(canvas, design, userName, variant = 'grid', onReady) {
 
 // ── PageThree ─────────────────────────────────────────────
 const PageThree = () => {
+    useEffect(() => {
+        Object.keys(imageCache).forEach(key => delete imageCache[key]);
+    }, []);
     const location = useLocation();
     const navigate = useNavigate();
     const userName = location.state?.name || 'User Name';
