@@ -869,6 +869,7 @@ footer span {
 
   header::before {
     height: 60px;
+    left: 51%;
   }
 
   header .left {
