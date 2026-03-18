@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
-// ── cache خارج الـ component عشان يشتغل مع drawCard ──
+// ── cache ──
 const imageCache = {};
 
 // ── Countdown Overlay ──────────────────────────────────────
@@ -70,7 +70,7 @@ const normal = [
     { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1720, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
-// ── دالة الرسم — بتستخدم الـ cache تلقائياً ──────────────
+// ──  ─cash draw─────────────
 function drawCard(canvas, design, userName, variant = 'grid', onReady) {
     if (!canvas || !design?.image) return;
     const ctx = canvas.getContext('2d');
@@ -97,13 +97,13 @@ function drawCard(canvas, design, userName, variant = 'grid', onReady) {
         if (onReady) onReady();
     };
 
-    // ── لو الصورة في الـ cache استخدمها مباشرة ──
+    // ──  cache ──
     if (imageCache[design.image]) {
         render(imageCache[design.image]);
         return;
     }
 
-    // ── غير كده حملها وحطها في الـ cache ──
+    // ── cache ──
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
@@ -135,7 +135,6 @@ const PageThree = () => {
 
     const setCanvasRef = useCallback((el, index, design) => {
         if (!el) return;
-        // تجنب إعادة الرسم لو الـ canvas نفسه
         if (canvasRefs.current[index] === el) return;
         canvasRefs.current[index] = el;
         drawCard(el, design, userNameRef.current, 'grid', () => {
@@ -156,10 +155,10 @@ const PageThree = () => {
 
         const design = designs[selectedCard];
 
-        // ── انتقل فوراً ──
+        // ──  move to page four immediately ──
         navigate('/page-four', { state: { name: userName, design } });
 
-        // ── حمّل بجودة كاملة في الخلفية من الـ cache ──
+        // ──  cache  ──
         const cachedImg = imageCache[design.image];
         const img = cachedImg || await new Promise((resolve, reject) => {
             const i = new Image();
