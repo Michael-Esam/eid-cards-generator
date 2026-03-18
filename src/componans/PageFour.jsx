@@ -163,7 +163,7 @@ const PageFour = () => {
                                 disabled={!isReady}
                                 title="Share via Instagram"
                             >
-                                <img src={ICONS.instagram} alt="Instagram" style={{ width: 28, height: 28 }} />
+                                <img src="/instagram.png" alt="Instagram" style={{ width: 28, height: 28 }} />
 
                             </button>
                             <button
@@ -172,7 +172,7 @@ const PageFour = () => {
                                 disabled={!isReady}
                                 title="Share via Snapchat"
                             >
-                                <img src={ICONS.snapchat} alt="Snapchat" style={{ width: 28, height: 28 }} />
+                                <img src="/snapchat.png" alt="Snapchat" style={{ width: 28, height: 28 }} />
                             </button>
                             <button
                                 className="share-btn tiktok"
