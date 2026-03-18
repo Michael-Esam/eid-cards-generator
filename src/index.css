@@ -698,7 +698,7 @@ footer {
   align-items: center;
   padding-bottom: 30px;
   margin-top: auto;
-  padding-bottom: 30px;
+  padding-top: 30px;
 }
 
 footer a {
@@ -709,7 +709,8 @@ footer a {
 }
 
 footer span {
-  font-size: 24px;
+  font-family: 'Rakkas', sans-serif;
+  font-size: 48px;
 }
 
 /* ==========================================================================
