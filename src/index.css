@@ -729,7 +729,7 @@ footer span {
   width: 100%;
   display: flex;
   margin: 5px 0;
-  gap: 5px;
+  gap: 3px;
   justify-content: center;
 }
 
@@ -873,6 +873,7 @@ footer span {
 
   header .left {
     gap: 1px;
+    margin-right: -13px;
   }
 
   header .left .eid-elfeter {

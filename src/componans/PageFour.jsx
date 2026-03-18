@@ -129,7 +129,6 @@ const PageFour = () => {
                 await navigator.share({ title: '', files: [file] });
             } catch (err) { console.log(err); }
         } else {
-            // ديسكتوب — يفتح واتساب ويب
             window.open('https://web.whatsapp.com/', '_blank');
         }
     };
@@ -147,17 +146,6 @@ const PageFour = () => {
         setTimeout(() => {
             window.open('https://twitter.com/intent/tweet?text=""', '_blank');
         }, 500);
-    };
-
-    // ── باقي المنصات — download فقط لأن المتصفح لا يدعم inject مباشر ──
-    const downloadImage = async () => {
-        if (!imageBlob) return;
-        const url = URL.createObjectURL(imageBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `eid-card-${Date.now()}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
     };
 
     // Redirect if no data
