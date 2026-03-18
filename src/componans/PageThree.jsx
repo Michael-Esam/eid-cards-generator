@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
+// تعريفات الخطوط
 const FONTS = {
     IBM_PLEX_ARABIC: "'IBM Plex Arabic', sans-serif",
     AYNAMA_CURVED: "'Aynama Curved', sans-serif",
@@ -9,15 +10,17 @@ const FONTS = {
     KHALAYA_VF: "'Khalaya VF', sans-serif",
 };
 
+// دالة مساعدة للحصول على مسار الصورة
 const getAssetUrlByFilename = (globMap, filename) => {
     const matchKey = Object.keys(globMap).find((k) => k.endsWith(`/${filename}`));
     return matchKey ? globMap[matchKey] : undefined;
 };
 
+// استيراد الصور
 const googleAssetUrls = import.meta.glob('../assets/images/google/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
 const normalAssetUrls = import.meta.glob('../assets/images/normal/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
 
-// الإحداثيات على الصورة الأصلية 4962x7016
+// بيانات التصاميم (الإحداثيات على الصورة الأصلية 4962x7016)
 const google = [
     { id: 1, image: getAssetUrlByFilename(googleAssetUrls, 'design1.jpg'), textX: 2481, textY: 2455, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
     { id: 2, image: getAssetUrlByFilename(googleAssetUrls, 'design2.jpg'), textX: 2481, textY: 5444, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
@@ -46,28 +49,39 @@ const normal = [
     { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1700, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
+// دالة رسم الصورة على الكانفاس مع إمكانية تحديد الحجم الأقصى
 function drawCard(canvas, design, userName, variant = 'grid') {
     if (!canvas || !design?.image) return;
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-        const maxSide = variant === 'preview' ? 1200 : 520;
+        // تحديد الحجم الأقصى حسب نوع العرض (شبكة / معاينة)
+        // رفع القيم للحصول على جودة أفضل
+        const maxSide = variant === 'preview' ? 2000 : 1200; // 1200 للشبكة، 2000 للمعاينة
         const scale = Math.min(maxSide / img.naturalWidth, maxSide / img.naturalHeight, 1);
         const W = Math.round(img.naturalWidth * scale);
         const H = Math.round(img.naturalHeight * scale);
-        canvas.width = W + 1;
+        canvas.width = W;
         canvas.height = H;
         ctx.drawImage(img, 0, 0, W, H);
+
         const name = String(userName || 'User Name').trim() || 'User Name';
+        // حساب الإحداثيات على canvas الجديد
         const x = design.textX * (W / img.naturalWidth);
         const y = design.textY * (H / img.naturalHeight);
         const fs = Math.round(H * (design.fontSizeRatio || 0.05));
+
         ctx.save();
         ctx.font = `400 ${fs}px ${design.fontFamily}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = design.color;
+        // إضافة ظل خفيف لتحسين القراءة (اختياري)
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
         ctx.fillText(name, x, y);
         ctx.restore();
     };
@@ -105,25 +119,105 @@ const PageThree = () => {
             setErrorMessage('الرجاء اختيار تصميم أولاً');
             return;
         }
-        const canvas = canvasRefs.current[selectedCard];
-        if (!canvas) {
-            setErrorMessage('تعذر تجهيز الصورة، حاول مرة أخرى');
+
+        const design = designs[selectedCard];
+        if (!design) {
+            setErrorMessage('خطأ في التصميم');
             return;
         }
-        const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-        if (!blob) {
-            setErrorMessage('تعذر حفظ الصورة، حاول مرة أخرى');
-            return;
+
+        // إنشاء canvas مؤقت عالي الجودة للتنزيل
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = design.image;
+
+        try {
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+
+            // نستخدم الحجم الأصلي مع حد أقصى 3000 بكسل (يمكن تعديله)
+            const maxDownloadSize = 3000;
+            const scale = Math.min(maxDownloadSize / img.naturalWidth, maxDownloadSize / img.naturalHeight, 1);
+            const W = Math.round(img.naturalWidth * scale);
+            const H = Math.round(img.naturalHeight * scale);
+
+            canvas.width = W;
+            canvas.height = H;
+            ctx.drawImage(img, 0, 0, W, H);
+
+            const name = String(userName || 'User Name').trim() || 'User Name';
+            const x = design.textX * (W / img.naturalWidth);
+            const y = design.textY * (H / img.naturalHeight);
+            const fs = Math.round(H * (design.fontSizeRatio || 0.05));
+
+            ctx.save();
+            ctx.font = `400 ${fs}px ${design.fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = design.color;
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillText(name, x, y);
+            ctx.restore();
+
+            // تحويل canvas إلى blob
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+            if (!blob) {
+                setErrorMessage('تعذر حفظ الصورة، حاول مرة أخرى');
+                return;
+            }
+
+            // تنزيل الصورة
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eid-card-${userName}-${timestamp}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // إنشاء صورة مصغرة للانتقال للصفحة التالية (اختياري، نستخدم نفس الـ canvas ولكن بحجم مناسب)
+            const previewCanvas = document.createElement('canvas');
+            const previewScale = 800 / Math.max(img.naturalWidth, img.naturalHeight); // حجم معقول للعرض
+            const pW = Math.round(img.naturalWidth * previewScale);
+            const pH = Math.round(img.naturalHeight * previewScale);
+            previewCanvas.width = pW;
+            previewCanvas.height = pH;
+            const pCtx = previewCanvas.getContext('2d');
+            pCtx.drawImage(img, 0, 0, pW, pH);
+            const px = design.textX * (pW / img.naturalWidth);
+            const py = design.textY * (pH / img.naturalHeight);
+            const pfs = Math.round(pH * (design.fontSizeRatio || 0.05));
+            pCtx.font = `400 ${pfs}px ${design.fontFamily}`;
+            pCtx.textAlign = 'center';
+            pCtx.textBaseline = 'middle';
+            pCtx.fillStyle = design.color;
+            pCtx.shadowColor = 'rgba(0,0,0,0.5)';
+            pCtx.shadowBlur = 5;
+            pCtx.shadowOffsetX = 2;
+            pCtx.shadowOffsetY = 2;
+            pCtx.fillText(name, px, py);
+            const imageDataUrl = previewCanvas.toDataURL('image/png');
+
+            // الانتقال للصفحة التالية مع صورة المعاينة
+            navigate('/page-four', {
+                state: {
+                    name: userName,
+                    design: design,
+                    imageDataUrl: imageDataUrl,
+                }
+            });
+
+        } catch (error) {
+            console.error('خطأ في تحميل الصورة:', error);
+            setErrorMessage('حدث خطأ أثناء تجهيز الصورة');
         }
-        const imageDataUrl = canvas.toDataURL('image/png');
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `eid-card-${userName}-${timestamp}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
-        navigate('/page-four', { state: { name: userName, design: designs[selectedCard], imageDataUrl } });
     };
 
     if (!userName) return <Navigate to="/" replace />;
@@ -157,7 +251,7 @@ const PageThree = () => {
                         ))}
                     </div>
                     {errorMessage && (
-                        <p className="error-message">{errorMessage}</p>
+                        <p className="error-message" style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</p>
                     )}
                     <div className="action-buttons">
                         <Link to="/page-two" state={{ name: userName }}>
@@ -176,7 +270,7 @@ const PageThree = () => {
                 </div>
             )}
             <footer>
-                <a href='https://linktr.ee/ai.wadod' target='_blank'>تصميم و تطوير <span>ودود</span></a>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/designer.png" alt="" /></a>
             </footer>
         </div>
     );

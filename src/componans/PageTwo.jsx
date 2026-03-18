@@ -54,7 +54,7 @@ const PageTwo = () => {
                 </div>
             </div>
             <footer>
-                <a href='https://linktr.ee/ai.wadod' target='_blank'>تصميم و تطوير <span>ودود</span></a>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/designer.png" alt="" /></a>
             </footer>
         </div>
     );

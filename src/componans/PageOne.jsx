@@ -37,7 +37,7 @@ const PageOne = () => {
                 <div className="card">
                     <h3>أدخل الاسم الثنائي</h3>
                     {errorMessage && (
-                        <p className="error-message">{errorMessage}</p>
+                        <p className="error-message">{errorMessage || "يرجى إدخال الاسم الثنائي فقط"}</p>
                     )}
                     <input
                         type="text"
@@ -53,7 +53,7 @@ const PageOne = () => {
                 </div>
             </div>
             <footer>
-                <a href='https://linktr.ee/ai.wadod' target='_blank'>تصميم و تطوير <span>ودود</span></a>
+                <a href='https://linktr.ee/ai.wadod' target='_blank'><img src="/designer.png" alt="" /></a>
             </footer>
         </div>
     );
