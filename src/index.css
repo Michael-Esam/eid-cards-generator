@@ -717,6 +717,7 @@ footer a {
 footer span {
   font-family: 'Khalaya VF', sans-serif;
   font-size: 38px;
+  margin-bottom: 18px;
 }
 
 .page-one footer,
@@ -1052,6 +1053,15 @@ footer span {
   .page-two .error-message {
     margin: 0;
     font-size: 14px;
+  }
+
+  footer a {
+    text-decoration: none;
+    font-size: 12px;
+  }
+
+  footer span {
+    font-size: 30px;
   }
 
 }
