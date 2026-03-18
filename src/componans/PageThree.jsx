@@ -2,22 +2,21 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, Link, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
-// Countdown overlay shown while a card image is still loading
+// ── cache خارج الـ component عشان يشتغل مع drawCard ──
+const imageCache = {};
+
+// ── Countdown Overlay ──────────────────────────────────────
 const CountdownOverlay = ({ loaded }) => {
     const [count, setCount] = useState(30);
 
     useEffect(() => {
-        // لو الصورة اتحملت خلاص، وقف العداد
         if (loaded) return;
-
         const id = setInterval(() => {
-            setCount(prev => (prev > 0 ? prev - 1 : 30));
+            setCount(prev => (prev > 0 ? prev - 1 : 0));
         }, 1000);
-
         return () => clearInterval(id);
     }, [loaded]);
 
-    // لو الصورة جاهزة، اخفي الـ overlay
     if (loaded) return null;
 
     return (
@@ -43,7 +42,6 @@ const getAssetUrlByFilename = (globMap, filename) => {
 const googleAssetUrls = import.meta.glob('../assets/images/google/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
 const normalAssetUrls = import.meta.glob('../assets/images/normal/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
 
-// Coordinates on original image 4962x7016
 const google = [
     { id: 1, image: getAssetUrlByFilename(googleAssetUrls, 'design1.jpg'), textX: 2481, textY: 2455, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
     { id: 2, image: getAssetUrlByFilename(googleAssetUrls, 'design2.jpg'), textX: 2481, textY: 5444, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.IBM_PLEX_ARABIC },
@@ -72,17 +70,17 @@ const normal = [
     { id: 11, image: getAssetUrlByFilename(normalAssetUrls, 'design11.jpg'), textX: 2821, textY: 1720, fontSizeRatio: 0.05, color: '#ffffff', fontFamily: FONTS.AYNAMA_CURVED },
 ];
 
+// ── دالة الرسم — بتستخدم الـ cache تلقائياً ──────────────
 function drawCard(canvas, design, userName, variant = 'grid', onReady) {
     if (!canvas || !design?.image) return;
     const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
+
+    const render = (img) => {
         const maxSide = variant === 'preview' ? 1200 : 520;
         const scale = Math.min(maxSide / img.naturalWidth, maxSide / img.naturalHeight, 1);
         const W = Math.round(img.naturalWidth * scale);
         const H = Math.round(img.naturalHeight * scale);
-        canvas.width = W + 1;
+        canvas.width = W;
         canvas.height = H;
         ctx.drawImage(img, 0, 0, W, H);
         const name = String(userName || 'User Name').trim() || 'User Name';
@@ -98,9 +96,24 @@ function drawCard(canvas, design, userName, variant = 'grid', onReady) {
         ctx.restore();
         if (onReady) onReady();
     };
+
+    // ── لو الصورة في الـ cache استخدمها مباشرة ──
+    if (imageCache[design.image]) {
+        render(imageCache[design.image]);
+        return;
+    }
+
+    // ── غير كده حملها وحطها في الـ cache ──
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+        imageCache[design.image] = img;
+        render(img);
+    };
     img.src = design.image;
 }
 
+// ── PageThree ─────────────────────────────────────────────
 const PageThree = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -117,13 +130,18 @@ const PageThree = () => {
     const canvasRefs = useRef([]);
     const popupCanvasRef = useRef(null);
 
+    const userNameRef = useRef(userName);
+    useEffect(() => { userNameRef.current = userName; }, [userName]);
+
     const setCanvasRef = useCallback((el, index, design) => {
         if (!el) return;
+        // تجنب إعادة الرسم لو الـ canvas نفسه
+        if (canvasRefs.current[index] === el) return;
         canvasRefs.current[index] = el;
-        drawCard(el, design, userName, 'grid', () => {
+        drawCard(el, design, userNameRef.current, 'grid', () => {
             setLoadedCards(prev => new Set([...prev, index]));
         });
-    }, [userName]);
+    }, []);
 
     useEffect(() => {
         if (previewDesign && popupCanvasRef.current)
@@ -138,39 +156,38 @@ const PageThree = () => {
 
         const design = designs[selectedCard];
 
-        // ✅ temporary canvas with original image size
-        const fullCanvas = document.createElement('canvas');
-        await new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => {
-                fullCanvas.width = img.naturalWidth + 1;
-                fullCanvas.height = img.naturalHeight;
-                const ctx = fullCanvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
+        // ── انتقل فوراً ──
+        navigate('/page-four', { state: { name: userName, design } });
 
-                const name = String(userName || 'User Name').trim() || 'User Name';
-                const x = design.textX;
-                const y = design.textY;
-                const fs = Math.round(img.naturalHeight * (design.fontSizeRatio || 0.05));
-
-                ctx.save();
-                ctx.font = `400 ${fs}px ${design.fontFamily}`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = design.color;
-                ctx.fillText(name, x, y);
-                ctx.restore();
-                resolve();
-            };
-            img.onerror = reject;
-            img.src = design.image;
+        // ── حمّل بجودة كاملة في الخلفية من الـ cache ──
+        const cachedImg = imageCache[design.image];
+        const img = cachedImg || await new Promise((resolve, reject) => {
+            const i = new Image();
+            i.crossOrigin = 'anonymous';
+            i.onload = () => { imageCache[design.image] = i; resolve(i); };
+            i.onerror = reject;
+            i.src = design.image;
         });
 
-        const blob = await new Promise(res => fullCanvas.toBlob(res, 'image/png'));
-        if (!blob) { setErrorMessage('تعذر حفظ الصورة، حاول مرة أخرى'); return; }
+        const fullCanvas = document.createElement('canvas');
+        fullCanvas.width = img.naturalWidth;
+        fullCanvas.height = img.naturalHeight;
+        const ctx = fullCanvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
 
-        const imageDataUrl = fullCanvas.toDataURL('image/png');
+        const name = String(userName || 'User Name').trim() || 'User Name';
+        const fs = Math.round(img.naturalHeight * (design.fontSizeRatio || 0.05));
+        ctx.save();
+        ctx.font = `400 ${fs}px ${design.fontFamily}`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = design.color;
+        ctx.fillText(name, design.textX, design.textY);
+        ctx.restore();
+
+        const blob = await new Promise(res => fullCanvas.toBlob(res, 'image/png'));
+        if (!blob) return;
+
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -178,8 +195,6 @@ const PageThree = () => {
         a.download = `eid-card-${userName}-${timestamp}.png`;
         a.click();
         URL.revokeObjectURL(url);
-
-        navigate('/page-four', { state: { name: userName, design: designs[selectedCard], imageDataUrl } });
     };
 
     if (!userName) return <Navigate to="/" replace />;
@@ -213,9 +228,7 @@ const PageThree = () => {
                             </div>
                         ))}
                     </div>
-                    {errorMessage && (
-                        <p className="error-message">{errorMessage}</p>
-                    )}
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
                     <div className="action-buttons">
                         <Link to="/page-two" state={{ name: userName }}>
                             <button className="btn-yellow">السابق</button>
@@ -227,13 +240,15 @@ const PageThree = () => {
             {previewDesign && (
                 <div className="image-popup-overlay" onClick={() => setPreviewDesign(null)}>
                     <div className="image-popup-content" onClick={e => e.stopPropagation()}>
-                        <button className="btn-close-popup" onClick={() => setPreviewDesign(null)}>×</button>
                         <canvas ref={popupCanvasRef} style={{ maxWidth: '100%', maxHeight: '90vh' }} />
+                        <button className="btn-close-popup" onClick={() => setPreviewDesign(null)}>×</button>
                     </div>
                 </div>
             )}
             <footer>
-                <a href='https://linktr.ee/ai.wadod' target='_blank'>تصميم و تطوير <span>ودود</span></a>
+                <a href='https://linktr.ee/ai.wadod' target='_blank' rel="noreferrer">
+                    تصميم و تطوير <span>ودود</span>
+                </a>
             </footer>
         </div>
     );
