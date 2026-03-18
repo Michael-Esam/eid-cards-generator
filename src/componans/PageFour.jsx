@@ -60,19 +60,11 @@ const PageFour = () => {
             const fs = Math.round(H * (design.fontSizeRatio || 0.05));
 
             ctx.save();
-            ctx.font = `bold ${fs}px ${design.fontFamily}`;
+            ctx.font = `400 ${fs}px ${design.fontFamily}`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillStyle = design.color || '#ffffff';
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.shadowBlur = fs * 0.3;
-            ctx.shadowOffsetX = 1;
-            ctx.shadowOffsetY = 1;
-            ctx.strokeStyle = 'rgba(0,0,0,0.45)';
-            ctx.lineWidth = Math.max(1, fs * 0.1);
-            ctx.strokeText(safeName, x, y);
-            ctx.shadowBlur = 0;
-            ctx.fillText(safeName, x, y);
+            ctx.fillStyle = design.color;
+            ctx.fillText(name, x, y);
             ctx.restore();
 
             canvas.toBlob(blob => {
