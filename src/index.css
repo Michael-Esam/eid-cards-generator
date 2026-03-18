@@ -853,6 +853,11 @@ footer span {
     margin-bottom: 50px;
   }
 
+  .page-two .card h3 {
+    font-size: 26px;
+    margin-bottom: 30px;
+  }
+
   .card input {
     max-width: 300px;
     font-size: 16px;
