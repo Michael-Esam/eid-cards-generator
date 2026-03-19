@@ -50,11 +50,11 @@ const google = [
     { id:4,  image: getAssetUrlByFilename(googleAssetUrls,'design4.jpg'),  textX:414, textY:1100, fontSizeRatio:0.05, color:'#bcbcbc', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:5,  image: getAssetUrlByFilename(googleAssetUrls,'design5.jpg'),  textX:414, textY:1014, fontSizeRatio:0.05, color:'#c8b89a', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:6,  image: getAssetUrlByFilename(googleAssetUrls,'design6.jpg'),  textX:417, textY:925,  fontSizeRatio:0.06, color:'#393938', fontFamily:FONTS.KHALAYA },
-    { id:7,  image: getAssetUrlByFilename(googleAssetUrls,'design7.jpg'),  textX:414, textY:264,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
+    { id:7,  image: getAssetUrlByFilename(googleAssetUrls,'design7.jpg'),  textX:404, textY:264,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
     { id:8,  image: getAssetUrlByFilename(googleAssetUrls,'design8.jpg'),  textX:414, textY:1090, fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
     { id:9,  image: getAssetUrlByFilename(googleAssetUrls,'design9.jpg'),  textX:414, textY:271,  fontSizeRatio:0.05, color:'#c8860a', fontFamily:FONTS.AYNAMA_CURVED },
     { id:10, image: getAssetUrlByFilename(googleAssetUrls,'design10.jpg'), textX:414, textY:379,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
-    { id:11, image: getAssetUrlByFilename(googleAssetUrls,'design11.jpg'), textX:480, textY:290,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
+    { id:11, image: getAssetUrlByFilename(googleAssetUrls,'design11.jpg'), textX:475, textY:290,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
 ];
 
 const normal = [
@@ -64,11 +64,11 @@ const normal = [
     { id:4,  image: getAssetUrlByFilename(normalAssetUrls,'design4.png'),  textX:414, textY:1100, fontSizeRatio:0.05, color:'#bcbcbc', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:5,  image: getAssetUrlByFilename(normalAssetUrls,'design5.png'),  textX:414, textY:1014, fontSizeRatio:0.05, color:'#c8b89a', fontFamily:FONTS.IBM_PLEX_ARABIC },
     { id:6,  image: getAssetUrlByFilename(normalAssetUrls,'design6.png'),  textX:417, textY:925,  fontSizeRatio:0.06, color:'#393938', fontFamily:FONTS.KHALAYA },
-    { id:7,  image: getAssetUrlByFilename(normalAssetUrls,'design7.png'),  textX:414, textY:264,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
+    { id:7,  image: getAssetUrlByFilename(normalAssetUrls,'design7.png'),  textX:404, textY:264,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
     { id:8,  image: getAssetUrlByFilename(normalAssetUrls,'design8.png'),  textX:414, textY:1090, fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
     { id:9,  image: getAssetUrlByFilename(normalAssetUrls,'design9.png'),  textX:414, textY:271,  fontSizeRatio:0.05, color:'#c8860a', fontFamily:FONTS.AYNAMA_CURVED },
     { id:10, image: getAssetUrlByFilename(normalAssetUrls,'design10.png'), textX:453, textY:379,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
-    { id:11, image: getAssetUrlByFilename(normalAssetUrls,'design11.png'), textX:480, textY:290,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
+    { id:11, image: getAssetUrlByFilename(normalAssetUrls,'design11.png'), textX:475, textY:290,  fontSizeRatio:0.05, color:'#ffffff', fontFamily:FONTS.AYNAMA_CURVED },
 ];
 
 // ── دالة الرسم مع cache ────────────────────────────────────
